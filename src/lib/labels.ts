@@ -61,3 +61,6 @@ export function formatGrams(g: number): string {
 export function formatNumber(n: number, digits = 0): string {
   return n.toLocaleString("de-DE", { maximumFractionDigits: digits, minimumFractionDigits: 0 });
 }
+
+/** Kategorien, die man meist vorraetig hat (nicht in den Kassenbon einrechnen). */
+export const PANTRY_CATEGORIES = new Set(["Gewürze & Saucen", "Öle & Fette"]);

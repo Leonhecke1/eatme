@@ -53,9 +53,9 @@ export function AdminRecipeForm({ initial, ingredients }: { initial: AdminRecipe
   };
 
   return (
-    <div className="grid gap-5 lg:grid-cols-[1fr_320px]">
+    <div className="grid grid-cols-1 gap-5 lg:grid-cols-[1fr_320px]">
       <div className="space-y-5">
-        <Card className="grid gap-4 sm:grid-cols-2">
+        <Card className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Field label="Titel" className="sm:col-span-2">
             <Input value={data.title} onChange={(e) => set("title", e.target.value)} />
           </Field>
@@ -137,7 +137,7 @@ export function AdminRecipeForm({ initial, ingredients }: { initial: AdminRecipe
               </li>
             ))}
           </ul>
-          <div className="mt-3 grid gap-2 sm:grid-cols-[1fr_100px_auto]">
+          <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-[1fr_100px_auto]">
             <IngredientPicker key={pickerKey} ingredients={ingredients} value={picked} onChange={setPicked} />
             <Input type="number" aria-label="Gramm" value={grams} onChange={(e) => setGrams(e.target.value)} />
             <Button

@@ -44,7 +44,7 @@ export default async function ProfilePage() {
         </form>
         {points.length > 1 ? <WeightChart points={points} /> : null}
         {weights.length > 0 ? (
-          <ul className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+          <ul className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
             {weights.slice(0, 12).map((w) => (
               <li key={w.id} className="flex items-center justify-between rounded-2xl bg-mint-50 px-4 py-2">
                 <span className="text-sm text-muted">{formatDateShort(isoFromDate(w.date))}</span>

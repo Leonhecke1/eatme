@@ -40,7 +40,7 @@ export function QuickAdd({
       <input type="hidden" name="date" value={date} />
       <input type="hidden" name="ingredientId" value={picked?.id ?? ""} />
       <IngredientPicker key={resetKey} ingredients={ingredients} value={picked} onChange={setPicked} placeholder="Lebensmittel suchen, z. B. Banane" />
-      <div className="grid grid-cols-[1fr_1fr] gap-2 sm:grid-cols-[120px_1fr_auto]">
+      <div className="grid grid-cols-[110px_1fr] gap-2">
         <div className="relative">
           <Input key={resetKey} name="grams" type="number" inputMode="decimal" defaultValue={100} aria-label="Menge in Gramm" className="pr-8" />
           <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-sm text-muted">g</span>
@@ -52,7 +52,7 @@ export function QuickAdd({
             </option>
           ))}
         </Select>
-        <Button type="submit" disabled={!picked || pending} className="col-span-2 sm:col-span-1">
+        <Button type="submit" disabled={!picked || pending} className="col-span-2">
           <Plus className="h-5 w-5" aria-hidden /> Eintragen
         </Button>
       </div>

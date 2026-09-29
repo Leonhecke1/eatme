@@ -24,7 +24,7 @@ export default async function LandingPage() {
         </ButtonLink>
       </header>
       <main className="mx-auto max-w-6xl px-4 pb-16 sm:px-6">
-        <section className="grid items-center gap-10 py-8 md:grid-cols-2 md:py-16">
+        <section className="grid grid-cols-1 items-center gap-10 py-8 md:grid-cols-2 md:py-16">
           <div>
             <p className="mb-3 inline-flex rounded-full bg-mint-200 px-3 py-1 text-sm font-bold text-leaf-700">
               Vegan essen, einfach geplant
@@ -82,7 +82,7 @@ export default async function LandingPage() {
             </div>
           </div>
         </section>
-        <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {FEATURES.map(({ icon: Icon, title, text }) => (
             <div key={title} className="rounded-3xl bg-surface p-5 shadow-soft">
               <span className="mb-3 flex h-11 w-11 items-center justify-center rounded-2xl bg-mint-100 text-leaf-600">

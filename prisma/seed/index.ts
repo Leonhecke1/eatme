@@ -19,6 +19,13 @@ const SUPERMARKETS: [string, number][] = [
 const db = new PrismaClient({ adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }) });
 
 async function main() {
+  // Beim Container-Start nur eine leere Datenbank befuellen, damit Admin-Aenderungen erhalten bleiben.
+  if (process.env.SEED_MODE === "if-empty" && (await db.recipe.count()) > 0) {
+    console.log("Seed übersprungen: Datenbank enthält bereits Rezepte.");
+    await ensureAdmin();
+    return;
+  }
+
   for (const [name, priceFactor] of SUPERMARKETS) {
     await db.supermarket.upsert({ where: { name }, update: { priceFactor }, create: { name, priceFactor } });
   }
@@ -70,18 +77,21 @@ async function main() {
     });
   }
 
+  await ensureAdmin();
+  console.log(`Seed fertig: ${SUPERMARKETS.length} Supermärkte, ${INGREDIENTS.length} Zutaten, ${RECIPES.length} Rezepte.`);
+}
+
+/** Legt den Admin aus ADMIN_EMAIL/ADMIN_PASSWORD an bzw. gibt einem bestehenden Konto die Admin-Rolle. */
+async function ensureAdmin() {
   const adminEmail = process.env.ADMIN_EMAIL?.toLowerCase().trim();
   const adminPassword = process.env.ADMIN_PASSWORD;
-  if (adminEmail && adminPassword) {
-    const passwordHash = await bcrypt.hash(adminPassword, 12);
-    await db.user.upsert({
-      where: { email: adminEmail },
-      update: { role: "ADMIN" },
-      create: { email: adminEmail, name: "Admin", passwordHash, role: "ADMIN" },
-    });
-  }
-
-  console.log(`Seed fertig: ${SUPERMARKETS.length} Supermärkte, ${INGREDIENTS.length} Zutaten, ${RECIPES.length} Rezepte.`);
+  if (!adminEmail || !adminPassword) return;
+  const passwordHash = await bcrypt.hash(adminPassword, 12);
+  await db.user.upsert({
+    where: { email: adminEmail },
+    update: { role: "ADMIN" },
+    create: { email: adminEmail, name: "Admin", passwordHash, role: "ADMIN" },
+  });
 }
 
 main()

@@ -118,7 +118,7 @@ export function ProfileEditor({ mode, initial, supermarkets, ingredients }: Prop
 
   if (mode === "edit") {
     return (
-      <div className="grid gap-5 lg:grid-cols-[1fr_340px]">
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-[1fr_340px]">
         <div className="space-y-5">
           {sections.map((s, i) => (
             <Card key={i}>
@@ -220,9 +220,9 @@ function numberOrZero(v: string) {
 
 function BodySection({ data, set }: SectionProps) {
   return (
-    <div className="grid gap-4 sm:grid-cols-2">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
       <Field label="Geschlecht (für die Grundumsatz-Formel)" className="sm:col-span-2">
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <Chip active={data.sex === "WEIBLICH"} onClick={() => set("sex", "WEIBLICH")}>
             Weiblich
           </Chip>
@@ -262,7 +262,7 @@ function ActivitySection({ data, set }: SectionProps) {
   return (
     <div className="space-y-5">
       <Field label="Wie aktiv ist dein Alltag (ohne Sport)?">
-        <div className="grid gap-2 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
           {(Object.keys(ACTIVITY_FACTORS) as DailyActivity[]).map((key) => (
             <OptionCard
               key={key}
@@ -326,7 +326,7 @@ function GoalSection({ data, set }: SectionProps) {
   return (
     <div className="space-y-5">
       <Field label="Was ist dein Ziel?">
-        <div className="grid gap-2 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
           {(Object.keys(GOALS) as Goal[]).map((key) => {
             const Icon = GOAL_ICONS[key];
             return (
@@ -343,7 +343,7 @@ function GoalSection({ data, set }: SectionProps) {
         </div>
       </Field>
       <Field label="Mahlzeiten pro Tag">
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           {[3, 4, 5].map((n) => (
             <Chip key={n} active={data.mealsPerDay === n} onClick={() => set("mealsPerDay", n)}>
               {n} {n === 3 ? "(ohne Snack)" : n === 4 ? "(1 Snack)" : "(2 Snacks)"}

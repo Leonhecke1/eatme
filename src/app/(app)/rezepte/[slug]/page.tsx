@@ -38,7 +38,7 @@ export default async function RecipePage({ params }: PageProps<"/rezepte/[slug]"
       <Link href="/rezepte" className="mb-4 inline-flex items-center gap-1.5 text-sm font-bold text-muted hover:text-leaf-700">
         <ArrowLeft className="h-4 w-4" aria-hidden /> Alle Rezepte
       </Link>
-      <div className="grid gap-5 lg:grid-cols-[1fr_380px]">
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-[1fr_380px]">
         <div className="space-y-5">
           <Card className="overflow-hidden p-0 sm:p-0">
             <RecipeVisual baseType={recipe.baseType} className="h-36 sm:h-44" iconClassName="h-14 w-14" />

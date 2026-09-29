@@ -8,7 +8,7 @@ import { changeServingAction, swapEntryAction, toggleLockAction } from "@/server
 import { togglePlanEntryEatenAction } from "@/server/actions/log";
 import type { PlanEntryView } from "@/server/plan-view";
 
-export function PlanEntryCard({ entry, compact = false, showActions = true }: { entry: PlanEntryView; compact?: boolean; showActions?: boolean }) {
+export function PlanEntryCard({ entry, showActions = true }: { entry: PlanEntryView; showActions?: boolean }) {
   const href = entry.savedRecipeId ? `/gespeichert/${entry.savedRecipeId}` : `/rezepte/${entry.slug}`;
   return (
     <div
@@ -37,7 +37,7 @@ export function PlanEntryCard({ entry, compact = false, showActions = true }: { 
         </form>
         <div className="min-w-0 flex-1">
           <p className="text-[11px] font-bold uppercase tracking-wide text-muted">{MEAL_LABELS[entry.mealType]}</p>
-          <Link href={href} className={cn("block font-extrabold leading-snug hover:text-leaf-700", compact ? "text-sm" : "text-[15px]", entry.eaten && "text-muted")}>
+          <Link href={href} className={cn("block font-extrabold leading-snug hover:text-leaf-700", "text-[15px] xl:text-sm", entry.eaten && "text-muted")}>
             {entry.title}
           </Link>
           <p className="mt-0.5 text-xs tabular-nums text-muted">
@@ -46,7 +46,7 @@ export function PlanEntryCard({ entry, compact = false, showActions = true }: { 
         </div>
       </div>
       {showActions ? (
-        <div className={cn("mt-2 flex items-center gap-1", compact ? "flex-wrap" : "justify-between")}>
+        <div className="mt-2 flex flex-wrap items-center justify-between gap-1">
           <div className="flex items-center rounded-xl bg-mint-50">
             <form action={changeServingAction}>
               <input type="hidden" name="entryId" value={entry.id} />

@@ -119,7 +119,7 @@ export default async function PlanPage({ searchParams }: PageProps<"/plan">) {
         </div>
       ) : null}
 
-      <div className="mb-5 grid gap-3 sm:grid-cols-3">
+      <div className="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
         <Card className="p-4">
           <MacroBar label="Kalorien pro Tag (Durchschnitt)" value={avgKcal} max={plan.targetKcal} unit="kcal" />
         </Card>
@@ -150,7 +150,7 @@ export default async function PlanPage({ searchParams }: PageProps<"/plan">) {
               </h2>
               <span className="text-xs font-bold tabular-nums text-muted">{formatNumber(d.kcal)} kcal</span>
             </div>
-            <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-1">
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-1">
               {d.entries.map((e) => (
                 <PlanEntryCard key={e.id} entry={e} />
               ))}

@@ -155,7 +155,18 @@ export async function rebuildShoppingList(userId: string, planId: string) {
     db.shoppingListItem.createMany({
       data: lines.map((l) => ({ planId, ...l, checked: checked.has(l.ingredientId) })),
     }),
-    db.mealPlan.update({ where: { id: planId }, data: { estimatedCostCents: total } }),
+    // Budget und Ziele folgen immer dem aktuellen Profil.
+    db.mealPlan.update({
+      where: { id: planId },
+      data: {
+        estimatedCostCents: total,
+        budgetCents: ctx.profile.weeklyBudgetCents,
+        targetKcal: ctx.energy.target,
+        targetProtein: ctx.energy.protein,
+        targetCarbs: ctx.energy.carbs,
+        targetFat: ctx.energy.fat,
+      },
+    }),
   ]);
 }
 

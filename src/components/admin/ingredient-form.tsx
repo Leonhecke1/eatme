@@ -39,7 +39,7 @@ export function AdminIngredientForm({ ingredient, categories }: { ingredient: Ad
   return (
     <form action={action} className="space-y-3">
       {ingredient.id ? <input type="hidden" name="id" value={ingredient.id} /> : null}
-      <div className="grid gap-2 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
         <label className="text-xs font-bold text-muted">
           Name
           <Input name="name" defaultValue={ingredient.name} required className="mt-1 h-10" />

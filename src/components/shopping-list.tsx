@@ -5,7 +5,7 @@ import { Check, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/form";
 import { cn } from "@/lib/cn";
-import { formatGrams } from "@/lib/labels";
+import { PANTRY_CATEGORIES, formatGrams } from "@/lib/labels";
 import { formatEuro } from "@/lib/pricing";
 import { resetPriceOverrideAction, setPriceOverrideAction, toggleShoppingItemAction } from "@/server/actions/plan";
 
@@ -48,7 +48,10 @@ export function ShoppingList({ items }: { items: ShoppingItemView[] }) {
       </div>
       {[...groups.entries()].map(([category, list]) => (
         <section key={category}>
-          <h2 className="mb-2 px-1 text-xs font-bold uppercase tracking-wide text-muted">{category}</h2>
+          <h2 className="mb-2 px-1 text-xs font-bold uppercase tracking-wide text-muted">
+            {category}
+            {PANTRY_CATEGORIES.has(category) ? <span className="ml-2 normal-case tracking-normal text-leaf-600">meist im Vorrat</span> : null}
+          </h2>
           <ul className="divide-y divide-line overflow-hidden rounded-3xl bg-surface shadow-soft">
             {list.map((it) => {
               const done = checked.has(it.id);

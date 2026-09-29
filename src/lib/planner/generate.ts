@@ -183,7 +183,7 @@ class PlannerContext {
     score -= Math.max(0, costRatio - 0.6) * 1.2;
 
     const reuse = st.ingredientIds.filter((id) => usedIngredients.has(id)).length / Math.max(1, st.ingredientIds.length);
-    score += reuse * 0.6;
+    score += reuse * 3;
 
     const factor = slotKcal / st.kcal;
     if (factor > 2.5 || factor < 0.5) score -= 1;

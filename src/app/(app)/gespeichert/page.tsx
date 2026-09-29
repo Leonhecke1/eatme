@@ -34,7 +34,7 @@ export default async function SavedPage() {
           action={<ButtonLink href="/rezepte">Rezepte entdecken</ButtonLink>}
         />
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {saved.map((s) => {
             const active = s.ingredients.filter((i) => !i.isRemoved);
             const sum = summarize(active, s.servings, ctx);

@@ -98,7 +98,7 @@ export function SavedRecipeEditor({
   };
 
   return (
-    <div className="grid gap-5 lg:grid-cols-[1fr_360px]">
+    <div className="grid grid-cols-1 gap-5 lg:grid-cols-[1fr_360px]">
       <div className="space-y-5">
         <Card>
           <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
@@ -236,7 +236,7 @@ export function SavedRecipeEditor({
 
           <div className="mt-4 rounded-2xl bg-mint-50 p-3">
             <p className="mb-2 text-sm font-bold">Zutat ergänzen</p>
-            <div className="grid gap-2 sm:grid-cols-[1fr_110px_auto]">
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-[1fr_110px_auto]">
               <IngredientPicker key={pickerKey} ingredients={ingredients} value={picked} onChange={setPicked} />
               <Input
                 type="number"

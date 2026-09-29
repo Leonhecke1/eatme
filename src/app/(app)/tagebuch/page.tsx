@@ -46,7 +46,7 @@ export default async function DiaryPage({ searchParams }: PageProps<"/tagebuch">
           </div>
         }
       />
-      <div className="grid gap-5 lg:grid-cols-[1fr_360px]">
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-[1fr_360px]">
         <div className="space-y-5">
           <Card>
             <DaySummary

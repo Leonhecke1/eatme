@@ -12,7 +12,7 @@ export function EnergySummary({
   activity: DailyActivity;
   compact?: boolean;
 }) {
-  const adjust = GOALS[goal].adjust;
+  const adjust = Math.round(GOALS[goal].adjust * 100) / 100;
   return (
     <div>
       <div className="rounded-3xl bg-gradient-to-br from-mint-100 to-mint-50 p-5 text-center">
@@ -35,7 +35,7 @@ export function EnergySummary({
           <Row label="Sport (Durchschnitt pro Tag)" value={`+ ${formatNumber(energy.sportPerDay)} kcal`} />
           <Row label="Gesamtverbrauch" value={`${formatNumber(energy.tdee)} kcal`} strong />
           <Row
-            label={`Zielanpassung ${adjust === 0 ? "" : adjust > 0 ? `(+${adjust * 100} %)` : `(${adjust * 100} %)`}`}
+            label={`Zielanpassung ${adjust === 0 ? "" : adjust > 0 ? `(+${Math.round(adjust * 100)} %)` : `(${Math.round(adjust * 100)} %)`}`}
             value={`${formatNumber(energy.target)} kcal`}
             strong
           />

@@ -73,7 +73,7 @@ export default async function SavedRecipePage({ params }: PageProps<"/gespeicher
         ingredients={ingredients}
       />
 
-      <div className="mt-5 grid gap-5 lg:grid-cols-[1fr_360px]">
+      <div className="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-[1fr_360px]">
         <Card>
           <h2 className="mb-3 text-lg font-extrabold">Zubereitung</h2>
           <ol className="space-y-3">

@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/card";
 import { EmptyState, PageHeader, Stat } from "@/components/ui/page";
 import { db } from "@/lib/db";
 import { addDays, dateFromISO, formatDateShort, isISODate, todayISO, weekStartISO } from "@/lib/dates";
+import { PANTRY_CATEGORIES } from "@/lib/labels";
 import { formatEuro } from "@/lib/pricing";
 import { uncheckAllShoppingAction } from "@/server/actions/plan";
 import { requireProfileUser } from "@/server/auth";
@@ -64,7 +65,8 @@ export default async function ShoppingPage({ searchParams }: PageProps<"/plan/ei
       };
     })
     .sort((a, b) => a.category.localeCompare(b.category, "de") || a.name.localeCompare(b.name, "de"));
-  const packageTotal = items.reduce((s, i) => s + i.packages * i.packagePriceCents, 0);
+  const packageTotal = items.filter((i) => !PANTRY_CATEGORIES.has(i.category)).reduce((s, i) => s + i.packages * i.packagePriceCents, 0);
+  const pantryTotal = items.filter((i) => PANTRY_CATEGORIES.has(i.category)).reduce((s, i) => s + i.packages * i.packagePriceCents, 0);
 
   return (
     <>
@@ -81,12 +83,13 @@ export default async function ShoppingPage({ searchParams }: PageProps<"/plan/ei
           </form>
         }
       />
-      <div className="grid gap-5 lg:grid-cols-[1fr_320px]">
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-[1fr_320px]">
         <ShoppingList key={items.map((i) => `${i.id}${i.costCents}`).join()} items={items} />
         <div className="lg:sticky lg:top-8 lg:self-start">
           <Card className="space-y-3">
             <Stat label="Verbrauch diese Woche" value={formatEuro(plan.estimatedCostCents)} hint={`Budget: ${formatEuro(plan.budgetCents)}`} />
-            <Stat label="Kassenbon (ganze Packungen)" value={formatEuro(packageTotal)} hint="Reste bleiben für die nächste Woche." />
+            <Stat label="Einkauf (ganze Packungen)" value={formatEuro(packageTotal)} hint="Ohne Vorrat. Reste reichen oft für die nächste Woche." />
+            {pantryTotal > 0 ? <Stat label="Vorrat, falls nicht zu Hause" value={formatEuro(pantryTotal)} hint="Gewürze, Saucen und Öle" /> : null}
             <p className="text-xs text-muted">
               Preise sind Richtwerte, angepasst an deinen Supermarkt. Tippe auf den Stift, um einen eigenen Preis zu hinterlegen.
             </p>
