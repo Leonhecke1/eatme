@@ -48,7 +48,7 @@ export default async function TodayPage() {
         </h1>
       </header>
 
-      <div className="grid grid-cols-1 gap-5 lg:grid-cols-[1fr_360px]">
+      <div className="grid grid-cols-1 gap-5 xl:grid-cols-[1fr_360px]">
         <div className="space-y-5">
           <Card>
             <DaySummary
@@ -66,7 +66,7 @@ export default async function TodayPage() {
             </div>
             {plan ? (
               <>
-                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                <div className="space-y-3">
                   {todayEntries.map((e) => (
                     <PlanEntryCard key={e.id} entry={e} showActions={false} />
                   ))}
@@ -104,7 +104,7 @@ export default async function TodayPage() {
           </Card>
         </div>
 
-        <div className="space-y-5 lg:sticky lg:top-8 lg:self-start">
+        <div className="space-y-5 xl:sticky xl:top-8 xl:self-start">
           <Card>
             <SectionTitle>Schnell eintragen</SectionTitle>
             <QuickAdd ingredients={ingredients} date={today} defaultMealType={mealTypeForNow()} />

@@ -1,12 +1,8 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { CalendarPlus, ChevronLeft, ChevronRight, PartyPopper, RefreshCw, ShoppingBasket } from "lucide-react";
-import { DayTabs } from "@/components/day-tabs";
-import { PlanEntryCard } from "@/components/plan-entry-card";
+import { WeekPlanner, type PlannerDay } from "@/components/week-planner";
 import { Button, ButtonLink } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { EmptyState, PageHeader } from "@/components/ui/page";
-import { MacroBar } from "@/components/ui/progress";
+import { EmptyState } from "@/components/ui/page";
 import { cn } from "@/lib/cn";
 import {
   WEEKDAYS,
@@ -38,22 +34,44 @@ export default async function PlanPage({ searchParams }: PageProps<"/plan">) {
   const ctx = view?.ctx ?? (await loadUserContext(user.id));
 
   const weekLabel = `${formatDateShort(weekStart)} bis ${formatDateShort(addDays(weekStart, 6))}`;
-  const nav = (
-    <div className="flex items-center gap-1 rounded-2xl bg-surface p-1 shadow-soft">
-      <ButtonLink href={`/plan?woche=${addDays(weekStart, -7)}`} variant="ghost" size="icon-sm" aria-label="Vorherige Woche">
-        <ChevronLeft className="h-5 w-5" aria-hidden />
-      </ButtonLink>
-      <span className="min-w-36 text-center text-sm font-bold">{isCurrentWeek ? "Diese Woche" : weekLabel}</span>
-      <ButtonLink href={`/plan?woche=${addDays(weekStart, 7)}`} variant="ghost" size="icon-sm" aria-label="Nächste Woche">
-        <ChevronRight className="h-5 w-5" aria-hidden />
-      </ButtonLink>
-    </div>
+
+  const header = (
+    <header className="mb-6 flex flex-wrap items-center justify-between gap-3">
+      <div>
+        <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">Wochenplan</h1>
+        <div className="mt-1 flex items-center gap-1">
+          <ButtonLink href={`/plan?woche=${addDays(weekStart, -7)}`} variant="ghost" size="icon-sm" aria-label="Vorherige Woche">
+            <ChevronLeft className="h-5 w-5" aria-hidden />
+          </ButtonLink>
+          <span className="min-w-40 text-center text-sm font-bold text-muted">
+            {isCurrentWeek ? `Diese Woche · ${weekLabel}` : weekLabel}
+          </span>
+          <ButtonLink href={`/plan?woche=${addDays(weekStart, 7)}`} variant="ghost" size="icon-sm" aria-label="Nächste Woche">
+            <ChevronRight className="h-5 w-5" aria-hidden />
+          </ButtonLink>
+        </div>
+      </div>
+      {view ? (
+        <div className="flex flex-wrap gap-2">
+          <ButtonLink href={`/plan/einkaufsliste?woche=${weekStart}`} variant="secondary">
+            <ShoppingBasket className="h-5 w-5" aria-hidden /> Einkaufsliste
+          </ButtonLink>
+          <form action={generatePlanAction}>
+            <input type="hidden" name="weekStart" value={weekStart} />
+            <input type="hidden" name="keepLocked" value="1" />
+            <Button type="submit" variant="soft" title="Festgehaltene Mahlzeiten bleiben erhalten">
+              <RefreshCw className="h-5 w-5" aria-hidden /> Neu erstellen
+            </Button>
+          </form>
+        </div>
+      ) : null}
+    </header>
   );
 
   if (!view) {
     return (
       <>
-        <PageHeader title="Wochenplan" subtitle={weekLabel} actions={nav} />
+        {header}
         <EmptyState
           icon={CalendarPlus}
           title="Für diese Woche gibt es noch keinen Plan"
@@ -71,100 +89,110 @@ export default async function PlanPage({ searchParams }: PageProps<"/plan">) {
     );
   }
 
-  const { plan, entries } = view;
-  const days = Array.from({ length: 7 }, (_, i) => {
-    const list = entries.filter((e) => e.dayIndex === i);
+  const days: PlannerDay[] = Array.from({ length: 7 }, (_, i) => {
+    const date = addDays(weekStart, i);
+    const entries = view.entries.filter((e) => e.dayIndex === i);
+    const sum = (key: "kcal" | "protein" | "carbs" | "fat") => entries.reduce((s, e) => s + e.macros[key], 0);
     return {
-      date: addDays(weekStart, i),
-      entries: list,
-      kcal: list.reduce((s, e) => s + e.macros.kcal, 0),
-      protein: list.reduce((s, e) => s + e.macros.protein, 0),
+      date,
+      weekday: WEEKDAYS[i],
+      short: WEEKDAYS_SHORT[i],
+      dateLabel: formatDateShort(date),
+      isToday: date === today,
+      entries,
+      kcal: sum("kcal"),
+      protein: sum("protein"),
+      carbs: sum("carbs"),
+      fat: sum("fat"),
+      costCents: entries.reduce((s, e) => s + e.costCents, 0),
     };
   });
+
+  const targets = { kcal: ctx.energy.target, protein: ctx.energy.protein, carbs: ctx.energy.carbs, fat: ctx.energy.fat };
+  const budget = ctx.profile.weeklyBudgetCents;
+  const weekCost = days.reduce((s, d) => s + d.costCents, 0);
   const avgKcal = days.reduce((s, d) => s + d.kcal, 0) / 7;
   const avgProtein = days.reduce((s, d) => s + d.protein, 0) / 7;
-  const overBudget = plan.estimatedCostCents > plan.budgetCents;
+  const eaten = view.entries.filter((e) => e.eaten).length;
 
   return (
     <>
-      <PageHeader
-        title="Wochenplan"
-        subtitle={isCurrentWeek ? weekLabel : undefined}
-        actions={
-          <>
-            {nav}
-            <ButtonLink href={`/plan/einkaufsliste?woche=${weekStart}`} variant="secondary">
-              <ShoppingBasket className="h-5 w-5" aria-hidden /> Einkaufsliste
-            </ButtonLink>
-            <form action={generatePlanAction}>
-              <input type="hidden" name="weekStart" value={weekStart} />
-              <input type="hidden" name="keepLocked" value="1" />
-              <Button type="submit" variant="soft" title="Gesperrte Mahlzeiten bleiben erhalten">
-                <RefreshCw className="h-5 w-5" aria-hidden /> Neu erstellen
-              </Button>
-            </form>
-          </>
-        }
-      />
+      {header}
 
       {sp.neu === "1" ? (
-        <div className="mb-5 flex items-start gap-3 rounded-3xl bg-mint-100 p-4">
+        <div className="mb-6 flex items-start gap-3 rounded-3xl bg-mint-100 p-4">
           <PartyPopper className="mt-0.5 h-6 w-6 shrink-0 text-leaf-600" aria-hidden />
           <div>
             <p className="font-extrabold">Dein erster Plan ist fertig.</p>
             <p className="text-sm text-muted">
-              Tausche einzelne Mahlzeiten, passe Portionen an oder sperre Favoriten, damit sie beim Neu-Erstellen erhalten bleiben.
+              Wähle oben einen Tag. Du kannst Mahlzeiten tauschen, Portionen anpassen oder festhalten, damit sie beim Neu-Erstellen bleiben.
             </p>
           </div>
         </div>
       ) : null}
 
-      <div className="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
-        <Card className="p-4">
-          <MacroBar label="Kalorien pro Tag (Durchschnitt)" value={avgKcal} max={plan.targetKcal} unit="kcal" />
-        </Card>
-        <Card className="p-4">
-          <MacroBar label="Protein pro Tag (Durchschnitt)" value={avgProtein} max={plan.targetProtein} />
-        </Card>
-        <Card className="p-4">
-          <MacroBar label="Kosten der Woche" value={plan.estimatedCostCents / 100} max={plan.budgetCents / 100} unit="Euro" tone={overBudget ? "peach" : "leaf"} />
-          {overBudget ? (
-            <p className="mt-2 text-xs font-bold text-peach-700">
-              {formatEuro(plan.estimatedCostCents - plan.budgetCents)} über Budget. Tausche teure Gerichte oder erhöhe das Budget im Profil.
-            </p>
-          ) : null}
-        </Card>
+      <div className="mb-6 grid grid-cols-2 gap-px overflow-hidden rounded-3xl bg-line shadow-soft lg:grid-cols-4">
+        <SummaryStat
+          label="Kalorien pro Tag"
+          value={formatNumber(avgKcal)}
+          unit={`/ ${formatNumber(targets.kcal)} kcal`}
+          ratio={avgKcal / targets.kcal}
+        />
+        <SummaryStat
+          label="Protein pro Tag"
+          value={`${formatNumber(avgProtein)} g`}
+          unit={`/ ${targets.protein} g`}
+          ratio={avgProtein / targets.protein}
+        />
+        <SummaryStat
+          label="Kosten der Woche"
+          value={formatEuro(weekCost)}
+          unit={`/ ${formatEuro(budget)}`}
+          ratio={weekCost / budget}
+          warn={weekCost > budget}
+          hint={weekCost > budget ? `${formatEuro(weekCost - budget)} über Budget` : `${formatEuro(budget - weekCost)} Puffer`}
+        />
+        <SummaryStat
+          label="Gegessen"
+          value={String(eaten)}
+          unit={`/ ${view.entries.length} Mahlzeiten`}
+          ratio={eaten / Math.max(1, view.entries.length)}
+        />
       </div>
 
-      <DayTabs
-        initial={isCurrentWeek ? dayIndexInWeek(today) : 0}
-        days={days.map((d, i) => ({ short: WEEKDAYS_SHORT[i], date: formatDateShort(d.date), kcal: d.kcal }))}
-      >
-        {days.map((d, i) => (
-          <section key={d.date} aria-label={WEEKDAYS[i]}>
-            <div className="mb-2 flex items-baseline justify-between px-1">
-              <h2 className={cn("font-extrabold", d.date === today && "text-leaf-700")}>
-                <span className="xl:hidden">{WEEKDAYS[i]}</span>
-                <span className="hidden xl:inline">{WEEKDAYS_SHORT[i]}</span>
-                {d.date === today ? <span className="ml-2 text-xs font-bold text-leaf-600">Heute</span> : null}
-              </h2>
-              <span className="text-xs font-bold tabular-nums text-muted">{formatNumber(d.kcal)} kcal</span>
-            </div>
-            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-1">
-              {d.entries.map((e) => (
-                <PlanEntryCard key={e.id} entry={e} />
-              ))}
-            </div>
-          </section>
-        ))}
-      </DayTabs>
-
-      <p className="mt-6 text-center text-sm text-muted">
-        Tipp: Rezepte, die du speicherst und anpasst, verwendet der Plan automatisch in deiner Version.{" "}
-        <Link href="/rezepte" className="font-bold text-leaf-700 hover:underline">
-          Zu den Rezepten
-        </Link>
-      </p>
+      <WeekPlanner days={days} targets={targets} initial={isCurrentWeek ? dayIndexInWeek(today) : 0} />
     </>
+  );
+}
+
+function SummaryStat({
+  label,
+  value,
+  unit,
+  ratio,
+  warn,
+  hint,
+}: {
+  label: string;
+  value: string;
+  unit: string;
+  ratio: number;
+  warn?: boolean;
+  hint?: string;
+}) {
+  return (
+    <div className="bg-surface p-4 sm:p-5">
+      <p className="text-xs font-bold uppercase tracking-wide text-muted">{label}</p>
+      <p className="mt-1 truncate text-xl font-extrabold tabular-nums sm:text-2xl">
+        {value} <span className="text-sm font-bold text-muted">{unit}</span>
+      </p>
+      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-mint-100">
+        <div
+          className={cn("h-full rounded-full", warn ? "bg-peach-200" : "bg-leaf-400")}
+          style={{ width: `${Math.min(100, Math.max(0, ratio * 100))}%` }}
+        />
+      </div>
+      {hint ? <p className={cn("mt-1.5 text-xs font-bold", warn ? "text-peach-700" : "text-leaf-600")}>{hint}</p> : null}
+    </div>
   );
 }
