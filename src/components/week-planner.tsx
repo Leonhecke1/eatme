@@ -51,7 +51,7 @@ export function WeekPlanner({ days, targets, initial }: { days: PlannerDay[]; ta
       <div
         role="tablist"
         aria-label="Wochentage"
-        className="scrollbar-none -mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:grid sm:grid-cols-7 sm:overflow-visible sm:px-0"
+        className="grid grid-cols-7 gap-1.5 sm:gap-2"
       >
         {days.map((d, i) => {
           const selected = i === active;
@@ -65,16 +65,16 @@ export function WeekPlanner({ days, targets, initial }: { days: PlannerDay[]; ta
               aria-selected={selected}
               onClick={() => select(i)}
               className={cn(
-                "relative flex min-w-[76px] flex-1 flex-col items-center rounded-3xl px-2 pb-3 pt-2.5 transition-all",
+                "relative flex min-w-0 flex-col items-center rounded-2xl px-0.5 pb-2.5 pt-2 transition-all sm:rounded-3xl sm:px-2 sm:pb-3 sm:pt-2.5",
                 selected ? "bg-leaf-600 text-white shadow-lift" : "bg-surface text-ink shadow-soft hover:bg-mint-50",
               )}
             >
               <span className={cn("text-xs font-bold", selected ? "text-white/80" : "text-muted")}>{d.short}</span>
               <span className="text-lg font-extrabold leading-tight">{d.dateLabel.slice(0, 2)}</span>
-              <span className={cn("mt-0.5 text-[11px] font-bold tabular-nums", selected ? "text-white/80" : "text-muted")}>
+              <span className={cn("mt-0.5 hidden text-[11px] font-bold tabular-nums sm:block", selected ? "text-white/80" : "text-muted")}>
                 {formatNumber(d.kcal)} kcal
               </span>
-              <span className={cn("mt-2 h-1.5 w-10 overflow-hidden rounded-full", selected ? "bg-white/25" : "bg-mint-100")}>
+              <span className={cn("mt-1.5 h-1.5 w-6 overflow-hidden rounded-full sm:mt-2 sm:w-10", selected ? "bg-white/25" : "bg-mint-100")}>
                 <span
                   className={cn("block h-full rounded-full", selected ? "bg-white" : "bg-leaf-400")}
                   style={{ width: `${ratio * 100}%` }}
@@ -83,7 +83,7 @@ export function WeekPlanner({ days, targets, initial }: { days: PlannerDay[]; ta
               {d.isToday ? (
                 <span
                   className={cn(
-                    "absolute right-2.5 top-2.5 h-2 w-2 rounded-full",
+                    "absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full sm:right-2.5 sm:top-2.5 sm:h-2 sm:w-2",
                     selected ? "bg-white" : "bg-leaf-500",
                   )}
                   aria-label="Heute"
@@ -91,7 +91,7 @@ export function WeekPlanner({ days, targets, initial }: { days: PlannerDay[]; ta
               ) : null}
               {eaten > 0 ? (
                 <span
-                  className={cn("mt-1.5 inline-flex items-center gap-0.5 text-[11px] font-bold", selected ? "text-white/90" : "text-leaf-600")}
+                  className={cn("mt-1 inline-flex items-center gap-0.5 text-[10px] font-bold sm:mt-1.5 sm:text-[11px]", selected ? "text-white/90" : "text-leaf-600")}
                   title={`${eaten} von ${d.entries.length} gegessen`}
                 >
                   <Check className="h-3 w-3" aria-hidden />

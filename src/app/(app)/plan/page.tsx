@@ -183,9 +183,8 @@ function SummaryStat({
   return (
     <div className="bg-surface p-4 sm:p-5">
       <p className="text-xs font-bold uppercase tracking-wide text-muted">{label}</p>
-      <p className="mt-1 truncate text-xl font-extrabold tabular-nums sm:text-2xl">
-        {value} <span className="text-sm font-bold text-muted">{unit}</span>
-      </p>
+      <p className="mt-1 text-xl font-extrabold tabular-nums sm:text-2xl">{value}</p>
+      <p className="text-xs font-bold tabular-nums text-muted">{unit}</p>
       <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-mint-100">
         <div
           className={cn("h-full rounded-full", warn ? "bg-peach-200" : "bg-leaf-400")}

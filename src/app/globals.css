@@ -36,6 +36,7 @@ html {
 }
 
 body {
+  overflow-x: clip;
   background: var(--color-canvas);
   color: var(--color-ink);
 }

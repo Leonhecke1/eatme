@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Search, SearchX } from "lucide-react";
+import { CollapsibleFilters } from "@/components/collapsible-filters";
 import { RecipeCard } from "@/components/recipe-card";
 import { ButtonLink } from "@/components/ui/button";
 import { ChipLink } from "@/components/ui/chip";
@@ -52,7 +53,7 @@ export default async function RecipesPage({ searchParams }: PageProps<"/rezepte"
         <Input name="q" defaultValue={filters.q} placeholder="Rezept suchen, z. B. Curry" className="pl-10" aria-label="Rezept suchen" />
       </form>
 
-      <div className="space-y-3">
+      <CollapsibleFilters activeCount={[filters.basis, filters.mahlzeit, filters.zeit, filters.tag].filter(Boolean).length}>
         <FilterRow label="Beilage">
           <ChipLink href={hrefWith(params, "basis", undefined)} active={!filters.basis}>
             Alle
@@ -80,7 +81,7 @@ export default async function RecipesPage({ searchParams }: PageProps<"/rezepte"
             </ChipLink>
           ))}
         </FilterRow>
-      </div>
+      </CollapsibleFilters>
 
       <div className="mt-6">
         {recipes.length === 0 ? (
@@ -108,7 +109,7 @@ export default async function RecipesPage({ searchParams }: PageProps<"/rezepte"
 
 function FilterRow({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div role="group" aria-label={label} className="scrollbar-none -mx-4 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:flex-wrap sm:px-0">
+    <div role="group" aria-label={label} className="flex flex-wrap gap-2">
       {children}
     </div>
   );

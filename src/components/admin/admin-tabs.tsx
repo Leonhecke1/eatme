@@ -13,7 +13,7 @@ const TABS = [
 export function AdminTabs() {
   const pathname = usePathname();
   return (
-    <nav aria-label="Verwaltung" className="scrollbar-none -mx-4 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:px-0">
+    <nav aria-label="Verwaltung" className="flex flex-wrap gap-2">
       {TABS.map((t) => (
         <ChipLink
           key={t.href}
