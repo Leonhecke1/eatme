@@ -1,0 +1,15 @@
+# Nur Datenbank fuer lokale Entwicklung: docker compose -f docker-compose.dev.yml up -d
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: eatme
+      POSTGRES_PASSWORD: eatme
+      POSTGRES_DB: eatme
+    ports:
+      - "5433:5432"
+    volumes:
+      - eatme-dev-db:/var/lib/postgresql/data
+
+volumes:
+  eatme-dev-db:

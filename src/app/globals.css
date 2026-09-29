@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+@theme {
+  --color-canvas: #f5faf6;
+  --color-surface: #ffffff;
+  --color-mint-50: #f0f8f2;
+  --color-mint-100: #e3f4e8;
+  --color-mint-200: #cbebd5;
+  --color-mint-300: #a9ddbb;
+  --color-leaf-400: #8acfa6;
+  --color-leaf-500: #5db083;
+  --color-leaf-600: #3e8c60;
+  --color-leaf-700: #2f6e4a;
+  --color-leaf-800: #245439;
+  --color-ink: #1f2d24;
+  --color-muted: #637868;
+  --color-line: #dfece3;
+  --color-peach-100: #fcefe6;
+  --color-peach-200: #f6d7c3;
+  --color-peach-700: #94552f;
+  --color-sky-100: #e4f1f8;
+  --color-sky-400: #8cc3e0;
+  --color-butter-100: #fbf4dc;
+  --color-butter-400: #e8c96a;
+  --color-rose-100: #fbe9e9;
+  --color-rose-600: #b54a4a;
+
+  --font-sans: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
+
+  --shadow-soft: 0 1px 2px rgb(31 45 36 / 0.04), 0 4px 16px rgb(62 140 96 / 0.07);
+  --shadow-lift: 0 2px 4px rgb(31 45 36 / 0.05), 0 10px 30px rgb(62 140 96 / 0.12);
+}
+
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-leaf-500);
+  outline-offset: 2px;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.scrollbar-none {
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}

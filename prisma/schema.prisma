@@ -1,0 +1,325 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Sex {
+  MAENNLICH
+  WEIBLICH
+}
+
+enum DailyActivity {
+  SITZEND
+  LEICHT
+  MITTEL
+  STARK
+}
+
+enum Goal {
+  ABNEHMEN
+  HALTEN
+  MUSKELAUFBAU
+  ZUNEHMEN
+}
+
+enum MealType {
+  FRUEHSTUECK
+  MITTAG
+  ABEND
+  SNACK
+}
+
+enum BaseType {
+  REIS
+  NUDELN
+  KARTOFFELN
+  BROT
+  HUELSENFRUECHTE
+  HAFER
+  BOWL
+  SUPPE
+  SALAT
+  SONSTIGES
+}
+
+enum Allergen {
+  GLUTEN
+  SOJA
+  NUESSE
+  ERDNUESSE
+  SESAM
+}
+
+enum LogSource {
+  RECIPE
+  SAVED_RECIPE
+  INGREDIENT
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  passwordHash String
+  role         Role     @default(USER)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  profile       Profile?
+  sports        SportActivity[]
+  weights       WeightLog[]
+  favorites     FavoriteIngredient[]
+  prices        UserIngredientPrice[]
+  savedRecipes  SavedRecipe[]
+  mealPlans     MealPlan[]
+  foodLog       FoodLogEntry[]
+}
+
+model Profile {
+  userId            String        @id
+  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sex               Sex
+  birthDate         DateTime
+  heightCm          Int
+  weightKg          Float
+  bodyFatPct        Float?
+  dailyActivity     DailyActivity
+  goal              Goal
+  mealsPerDay       Int           @default(3)
+  supermarketId     String?
+  supermarket       Supermarket?  @relation(fields: [supermarketId], references: [id], onDelete: SetNull)
+  weeklyBudgetCents Int           @default(5000)
+  allergies         Allergen[]
+  dislikedIds       String[]
+  preferredBases    BaseType[]
+  updatedAt         DateTime      @updatedAt
+}
+
+model SportActivity {
+  id                String @id @default(cuid())
+  userId            String
+  user              User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type              String
+  minutesPerSession Int
+  sessionsPerWeek   Int
+
+  @@index([userId])
+}
+
+model WeightLog {
+  id       String   @id @default(cuid())
+  userId   String
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date     DateTime @db.Date
+  weightKg Float
+
+  @@unique([userId, date])
+}
+
+model Supermarket {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  priceFactor Float
+  profiles    Profile[]
+}
+
+model Ingredient {
+  id                   String     @id @default(cuid())
+  name                 String     @unique
+  category             String
+  kcal                 Float
+  protein              Float
+  carbs                Float
+  fat                  Float
+  fiber                Float      @default(0)
+  pricePer100gCents    Float
+  packageGrams         Int        @default(500)
+  unitName             String?
+  gramsPerUnit         Float?
+  allergens            Allergen[]
+  createdAt            DateTime   @default(now())
+
+  recipeIngredients    RecipeIngredient[]
+  savedIngredients     SavedRecipeIngredient[]
+  favorites            FavoriteIngredient[]
+  userPrices           UserIngredientPrice[]
+  shoppingItems        ShoppingListItem[]
+
+  @@index([category])
+}
+
+model UserIngredientPrice {
+  userId            String
+  user              User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ingredientId      String
+  ingredient        Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
+  pricePer100gCents Float
+
+  @@id([userId, ingredientId])
+}
+
+model FavoriteIngredient {
+  userId       String
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ingredientId String
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
+
+  @@id([userId, ingredientId])
+}
+
+model Recipe {
+  id          String             @id @default(cuid())
+  slug        String             @unique
+  title       String
+  description String
+  mealType    MealType
+  baseType    BaseType
+  servings    Int                @default(2)
+  prepMinutes Int
+  steps       String[]
+  tags        String[]
+  published   Boolean            @default(true)
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  ingredients RecipeIngredient[]
+  saved       SavedRecipe[]
+  planEntries MealPlanEntry[]
+
+  @@index([mealType, baseType])
+}
+
+model RecipeIngredient {
+  id           String     @id @default(cuid())
+  recipeId     String
+  recipe       Recipe     @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  ingredientId String
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Restrict)
+  grams        Float
+  note         String?
+  position     Int        @default(0)
+
+  @@index([recipeId])
+}
+
+model SavedRecipe {
+  id          String                  @id @default(cuid())
+  userId      String
+  user        User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recipeId    String
+  recipe      Recipe                  @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  note        String?
+  servings    Int
+  createdAt   DateTime                @default(now())
+  updatedAt   DateTime                @updatedAt
+
+  ingredients SavedRecipeIngredient[]
+  planEntries MealPlanEntry[]
+
+  @@unique([userId, recipeId])
+}
+
+model SavedRecipeIngredient {
+  id            String      @id @default(cuid())
+  savedRecipeId String
+  savedRecipe   SavedRecipe @relation(fields: [savedRecipeId], references: [id], onDelete: Cascade)
+  ingredientId  String
+  ingredient    Ingredient  @relation(fields: [ingredientId], references: [id], onDelete: Restrict)
+  grams         Float
+  isAdded       Boolean     @default(false)
+  isRemoved     Boolean     @default(false)
+  isChecked     Boolean     @default(false)
+  position      Int         @default(0)
+
+  @@index([savedRecipeId])
+}
+
+model MealPlan {
+  id                 String             @id @default(cuid())
+  userId             String
+  user               User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  weekStart          DateTime           @db.Date
+  targetKcal         Int
+  targetProtein      Int
+  targetCarbs        Int
+  targetFat          Int
+  budgetCents        Int
+  estimatedCostCents Int
+  seed               Int
+  createdAt          DateTime           @default(now())
+
+  entries            MealPlanEntry[]
+  shoppingItems      ShoppingListItem[]
+
+  @@unique([userId, weekStart])
+}
+
+model MealPlanEntry {
+  id            String       @id @default(cuid())
+  planId        String
+  plan          MealPlan     @relation(fields: [planId], references: [id], onDelete: Cascade)
+  dayIndex      Int
+  mealType      MealType
+  slot          Int          @default(0)
+  recipeId      String
+  recipe        Recipe       @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  savedRecipeId String?
+  savedRecipe   SavedRecipe? @relation(fields: [savedRecipeId], references: [id], onDelete: SetNull)
+  servingFactor Float
+  locked        Boolean      @default(false)
+  eaten         Boolean      @default(false)
+
+  @@index([planId, dayIndex])
+}
+
+model ShoppingListItem {
+  id           String     @id @default(cuid())
+  planId       String
+  plan         MealPlan   @relation(fields: [planId], references: [id], onDelete: Cascade)
+  ingredientId String
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
+  grams        Float
+  packages     Int
+  costCents    Int
+  checked      Boolean    @default(false)
+
+  @@unique([planId, ingredientId])
+}
+
+model FoodLogEntry {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date        DateTime  @db.Date
+  mealType    MealType
+  source      LogSource
+  refId       String?
+  planEntryId String?
+  title       String
+  amount      Float
+  amountUnit  String
+  kcal        Float
+  protein     Float
+  carbs       Float
+  fat         Float
+  createdAt   DateTime  @default(now())
+
+  @@index([userId, date])
+}
+
+model LoginAttempt {
+  id        String   @id @default(cuid())
+  key       String
+  createdAt DateTime @default(now())
+
+  @@index([key, createdAt])
+}
