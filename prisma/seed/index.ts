@@ -5,6 +5,7 @@ import { PrismaClient, type Allergen } from "../../src/generated/prisma/client";
 import { INGREDIENTS } from "./ingredients";
 import { RECIPES } from "./recipes";
 
+
 const SUPERMARKETS: [string, number][] = [
   ["Aldi", 0.85],
   ["Lidl", 0.85],
