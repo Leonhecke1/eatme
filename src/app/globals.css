@@ -33,12 +33,31 @@
 
 html {
   -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/*
+ * Kein seitliches Verschieben der Seite. Am html wirkt "hidden" auf den Viewport (sticky bleibt intakt),
+ * am body "clip", weil "hidden" dort einen Scroll-Container erzeugen und sticky brechen wuerde.
+ */
+html {
+  overflow-x: hidden;
 }
 
 body {
   overflow-x: clip;
   background: var(--color-canvas);
   color: var(--color-ink);
+}
+
+/* iOS zoomt bei Feldern unter 16px beim Antippen hinein, danach ist die Seite seitlich verschiebbar. */
+@media (max-width: 639px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
 }
 
 :focus-visible {

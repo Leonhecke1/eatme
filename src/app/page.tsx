@@ -29,7 +29,7 @@ export default async function LandingPage() {
             <p className="mb-3 inline-flex rounded-full bg-mint-200 px-3 py-1 text-sm font-bold text-leaf-700">
               Vegan essen, einfach geplant
             </p>
-            <h1 className="text-4xl font-extrabold leading-tight tracking-tight text-ink sm:text-5xl">
+            <h1 className="text-3xl font-extrabold leading-tight tracking-tight text-ink sm:text-5xl">
               Kalorien tracken und Wochenpläne erstellen, die zu dir passen.
             </h1>
             <p className="mt-4 max-w-lg text-lg text-muted">
@@ -45,13 +45,15 @@ export default async function LandingPage() {
               </ButtonLink>
             </div>
           </div>
-          <div className="rounded-[2rem] bg-surface p-5 shadow-lift sm:p-7">
-            <div className="flex items-center justify-between">
+          <div className="min-w-0 rounded-[2rem] bg-surface p-5 shadow-lift sm:p-7">
+            <div className="flex flex-wrap items-start justify-between gap-2">
               <div>
                 <p className="text-sm font-bold text-muted">Heute</p>
-                <p className="text-3xl font-extrabold text-ink">1.840 / 2.650 kcal</p>
+                <p className="text-2xl font-extrabold text-ink sm:text-3xl">
+                  1.840 <span className="text-base font-bold text-muted sm:text-lg">/ 2.650 kcal</span>
+                </p>
               </div>
-              <span className="rounded-full bg-mint-100 px-3 py-1 text-sm font-bold text-leaf-700">Muskelaufbau</span>
+              <span className="shrink-0 rounded-full bg-mint-100 px-3 py-1 text-sm font-bold text-leaf-700">Muskelaufbau</span>
             </div>
             <div className="mt-5 space-y-3">
               {[
